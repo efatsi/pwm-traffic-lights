@@ -22,6 +22,7 @@ class LightControl
 
     void initialize();
     void display(String light, String command);
+    void dualRainbows();
     void party();
   private:
     int _littleRedPin;
@@ -30,10 +31,17 @@ class LightControl
     int _largeRedPin;
     int _largeGreenPin;
     int _largeBluePin;
+
     int _min;
     int _littleMax;
     int _largeMax;
+
     int _fadeSpeed;
+
+    int _littlePartyTracker;
+    int _largePartyTracker;
+
+    void _getValues(int partyValue);
 };
 
 #endif

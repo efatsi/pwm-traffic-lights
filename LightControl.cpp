@@ -27,6 +27,9 @@ LightControl::LightControl(
 
   _fadeSpeed = 15;
 
+  _littlePartyTracker = random(100);
+  _largePartyTracker  = random(100);
+
   pinMode(littleRedPin,   OUTPUT);
   pinMode(littleGreenPin, OUTPUT);
   pinMode(littleBluePin,  OUTPUT);
@@ -104,14 +107,48 @@ void LightControl::display(String light, String command)
     analogWrite(greenPin, max);
     analogWrite(bluePin,  max);
   }
-  else {
-    analogWrite(redPin,   min);
+  else if (command == "rainbow") {
+    int i;
+
+    // start with just red
+    analogWrite(redPin, max);
+    analogWrite(bluePin, min);
     analogWrite(greenPin, min);
-    analogWrite(bluePin,  min);
+
+    // red to red/blue
+    for (i = min; i < max; i++) {
+      analogWrite(bluePin, i);
+      delay(_fadeSpeed);
+    }
+    // red/blue to blue
+    for (i = max; i > min; i--) {
+      analogWrite(redPin, i);
+      delay(_fadeSpeed);
+    }
+    // blue to blue/green
+    for (i = min; i < max; i++) {
+      analogWrite(greenPin, i);
+      delay(_fadeSpeed);
+    }
+    // blue/green to green
+    for (i = max; i > min; i--) {
+      analogWrite(bluePin, i);
+      delay(_fadeSpeed);
+    }
+    // green to green/red
+    for (i = min; i < max; i++) {
+      analogWrite(redPin, i);
+      delay(_fadeSpeed);
+    }
+    // green/red to red
+    for (i = max; i > min; i--) {
+      analogWrite(greenPin, i);
+      delay(_fadeSpeed);
+    }
   }
 }
 
-void LightControl::party() {
+void LightControl::dualRainbows() {
   int i;
 
   // start with just red
@@ -159,4 +196,71 @@ void LightControl::party() {
     analogWrite(_largeGreenPin, i * _largeMax / 100);
     delay(_fadeSpeed);
   }
+}
+
+void LightControl::party() {
+  _littlePartyTracker = (_littlePartyTracker + random(10)) % 100;
+  _largePartyTracker  = (_largePartyTracker  + random(10)) % 100;
+
+  int littleValues = _getValues(_littlePartyTracker);
+  int largeValues  = _getValues(_largePartyTracker);
+
+  analogWrite(_littleRedPin,   littleValues[0] * _littleMax / 100)
+  analogWrite(_littleGreenPin, littleValues[1] * _littleMax / 100)
+  analogWrite(_littleBluePin,  littleValues[2] * _littleMax / 100)
+
+  analogWrite(_largeRedPin,   largeValues[0] * _largeMax / 100)
+  analogWrite(_largeGreenPin, largeValues[1] * _largeMax / 100)
+  analogWrite(_largeBluePin,  largeValues[2] * _largeMax / 100)
+
+  delay(_fadeSpeed);
+}
+
+void LightControl::_getValues(int partyValue) {
+  int redValue, greenValue, blueValue;
+
+  // invalid input
+  if (partyValue < 0 || partyValue > 100) {
+    return {0, 0, 0};
+  }
+
+  // red on, green up
+  if (partyValue < 17) {
+    redValue   = 100;
+    greenValue = partyValue * 100 / 17;
+    blueValue  = 0;
+  }
+  // green on, red down
+  else if (partyValue < 33) {
+    redValue   = 100 - ((partyValue - 17) * 100 / 16);
+    greenValue = 100;
+    blueValue  = 0;
+  }
+  // green on, blue up
+  else if (partyValue < 50) {
+    redValue   = 0;
+    greenValue = 100;
+    blueValue  = (partyValue - 33) * 100 / 17;
+  }
+  // blue on, greem down
+  else if (partyValue < 67) {
+    redValue   = 0;
+    greenValue = 100 - ((partyValue - 50) * 100 / 17);
+    blueValue  = 100;
+  }
+  // blue on, red up
+  else if (partyValue < 83) {
+    redValue   = (partyValue - 67) * 100 / 16;
+    greenValue = 0;
+    blueValue  = 100;
+  }
+  // red on, blue down
+  else if (partyValue < 100) {
+    redValue   = 100;
+    greenValue = 0;
+    blueValue  = 100 - ((partyValue - 83) * 100 / 17);
+  }
+
+
+  return {redValue, greenValue, blueValue};
 }
