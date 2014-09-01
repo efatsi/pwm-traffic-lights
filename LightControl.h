@@ -41,7 +41,7 @@ class LightControl
     int _littlePartyTracker;
     int _largePartyTracker;
 
-    void _getValues(int partyValue);
+    void _setValues(int rgbValues[], int partyValue);
 };
 
 #endif
