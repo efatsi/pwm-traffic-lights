@@ -10,13 +10,13 @@ int led = D7;
 String littleColor;
 String largeColor;
 
-// littleRedPin   : D0;
-// littleGreenPin : D1;
-// littleBluePin  : A0;
+// littleRed   : D0;
+// littleGreen : D1;
+// littleBlue  : A0;
 
-// largeRedPin    : A4;
-// largeGreenPin  : A5;
-// largeBluePin   : A6;
+// largeRed    : A4;
+// largeGreen  : A5;
+// largeBlue   : A6;
 
 LightControl controller(D0, D1, A0, A4, A5, A6);
 bool bePartying = false;
@@ -35,11 +35,11 @@ void setup() {
 
   blinkLED(5, 100);
 
-//   client.connect(LIB_DOMAIN, 80);
-//   client.println("GET /softreset HTTP/1.0");
-//   client.println("Host: " LIB_DOMAIN);
-//   client.println("Content-Length: 0");
-//   client.println();
+  client.connect(LIB_DOMAIN, 80);
+  client.println("GET /softreset HTTP/1.0");
+  client.println("Host: " LIB_DOMAIN);
+  client.println("Content-Length: 0");
+  client.println();
 
   blinkLED(2, 1000);
 }
