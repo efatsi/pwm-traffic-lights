@@ -77,6 +77,7 @@ int party(String _) {
 }
 
 int off(String _) {
+  bePartying = false;
   littleColor = "off";
   largeColor = "off";
   return 1;

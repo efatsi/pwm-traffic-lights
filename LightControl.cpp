@@ -27,8 +27,8 @@ LightControl::LightControl(
 
   _fadeSpeed = 15;
 
-  _littlePartyTracker = rand() % 100;
-  _largePartyTracker  = rand() % 100;
+  _littlePartyTracker = rand() % 1000;
+  _largePartyTracker  = rand() % 1000;
 
   pinMode(littleRedPin,   OUTPUT);
   pinMode(littleGreenPin, OUTPUT);
@@ -106,6 +106,11 @@ void LightControl::display(String light, String command)
     analogWrite(redPin,   max);
     analogWrite(greenPin, max);
     analogWrite(bluePin,  max);
+  }
+  else if (command == "off") {
+    analogWrite(redPin,   min);
+    analogWrite(greenPin, min);
+    analogWrite(bluePin,  min);
   }
   else if (command == "rainbow") {
     int i;
@@ -199,8 +204,8 @@ void LightControl::dualRainbows() {
 }
 
 void LightControl::party() {
-  _littlePartyTracker = (_littlePartyTracker + (rand() % 10)) % 100;
-  _largePartyTracker  = (_largePartyTracker  + (rand() % 10)) % 100;
+  _littlePartyTracker = (_littlePartyTracker + (rand() % 8)) % 1000;
+  _largePartyTracker  = (_largePartyTracker  + (rand() % 8)) % 1000;
 
   int littleValues[3];
   int largeValues[3];
@@ -208,59 +213,59 @@ void LightControl::party() {
   _setValues(littleValues, _littlePartyTracker);
   _setValues(largeValues, _largePartyTracker);
 
-  analogWrite(_littleRedPin,   littleValues[0] * _littleMax / 100);
-  analogWrite(_littleGreenPin, littleValues[1] * _littleMax / 100);
-  analogWrite(_littleBluePin,  littleValues[2] * _littleMax / 100);
+  analogWrite(_littleRedPin,   littleValues[0] * _littleMax / 1000);
+  analogWrite(_littleGreenPin, littleValues[1] * _littleMax / 1000);
+  analogWrite(_littleBluePin,  littleValues[2] * _littleMax / 1000);
 
-  analogWrite(_largeRedPin,   largeValues[0] * _largeMax / 100);
-  analogWrite(_largeGreenPin, largeValues[1] * _largeMax / 100);
-  analogWrite(_largeBluePin,  largeValues[2] * _largeMax / 100);
+  analogWrite(_largeRedPin,   largeValues[0] * _largeMax / 1000);
+  analogWrite(_largeGreenPin, largeValues[1] * _largeMax / 1000);
+  analogWrite(_largeBluePin,  largeValues[2] * _largeMax / 1000);
 
-  delay(_fadeSpeed);
+  delay(_fadeSpeed * 2);
 }
 
 void LightControl::_setValues(int rgbValues[], int partyValue) {
   // invalid input
-  if (partyValue < 0 || partyValue > 100) {
+  if (partyValue < 0 || partyValue > 1000) {
     rgbValues[0] = 0;
     rgbValues[1] = 0;
     rgbValues[2] = 0;
   }
 
   // red on, green up
-  else if (partyValue < 17) {
-    rgbValues[0] = 100;
-    rgbValues[1] = partyValue * 100 / 17;
+  else if (partyValue < 170) {
+    rgbValues[0] = 1000;
+    rgbValues[1] = partyValue * 1000 / 170;
     rgbValues[2] = 0;
   }
   // green on, red down
-  else if (partyValue < 33) {
-    rgbValues[0] = 100 - ((partyValue - 17) * 100 / 16);
-    rgbValues[1] = 100;
+  else if (partyValue < 330) {
+    rgbValues[0] = 1000 - ((partyValue - 170) * 1000 / 160);
+    rgbValues[1] = 1000;
     rgbValues[2] = 0;
   }
   // green on, blue up
-  else if (partyValue < 50) {
+  else if (partyValue < 500) {
     rgbValues[0] = 0;
-    rgbValues[1] = 100;
-    rgbValues[2] = (partyValue - 33) * 100 / 17;
+    rgbValues[1] = 1000;
+    rgbValues[2] = (partyValue - 330) * 1000 / 170;
   }
   // blue on, greem down
-  else if (partyValue < 67) {
+  else if (partyValue < 670) {
     rgbValues[0] = 0;
-    rgbValues[1] = 100 - ((partyValue - 50) * 100 / 17);
-    rgbValues[2] = 100;
+    rgbValues[1] = 1000 - ((partyValue - 500) * 1000 / 170);
+    rgbValues[2] = 1000;
   }
   // blue on, red up
-  else if (partyValue < 83) {
-    rgbValues[0] = (partyValue - 67) * 100 / 16;
+  else if (partyValue < 830) {
+    rgbValues[0] = (partyValue - 670) * 1000 / 160;
     rgbValues[1] = 0;
-    rgbValues[2] = 100;
+    rgbValues[2] = 1000;
   }
   // red on, blue down
-  else if (partyValue < 100) {
-    rgbValues[0] = 100;
+  else if (partyValue < 1000) {
+    rgbValues[0] = 1000;
     rgbValues[1] = 0;
-    rgbValues[2] = 100 - ((partyValue - 83) * 100 / 17);
+    rgbValues[2] = 1000 - ((partyValue - 830) * 1000 / 170);
   }
 }
